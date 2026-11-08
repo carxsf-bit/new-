@@ -1,0 +1,31 @@
+name: Build NOVA TV
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.zip'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Unzip project
+        run: |
+          unzip -o NOVA_TV_Cloud_Build_Package.zip -d .
+
+      - name: Build APK
+        run: |
+          gradle -p NovaTV assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NOVA-TV-APK
+          path: NovaTV/app/build/outputs/apk/debug/app-debug.apk
